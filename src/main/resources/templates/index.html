@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8">
+    <title>Kalkulator walut</title>
+
+    <link rel="stylesheet" href="../static/css/styles.css" th:href="@{/css/styles.css}"/>
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <style>
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #2e5f22;
+            text-align: center;
+            padding: 5px 0;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 5;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
+    </style>
+
+</head>
+
+<body>
+<center>
+    <div id="dialog" title="Informacja" hidden>
+        <p>Przetwarzanie...</p>
+    </div>
+
+    <div id="main">
+        <h1>Kalkulator walut</h1>
+        <form class="search-form" method="POST" th:object="${findCurrencyForm}">
+            <div class="tooltip">
+                <label for="code">3 literowy kod waluty: </label>
+                <input type="text" th:field="*{code}" id="code" required minlength="3" maxlength="3">
+                <span class="tooltiptext">Kod według normy ISO 4217</span>
+            </div>
+
+            <div>
+                <label for="from">Data początkowa:</label>
+                <input type="text" id="from" readonly="true" th:field="*{fromDate}" required>
+            </div>
+
+            <div>
+                <label for="to">Data końcowa</label>
+                <input type="text" id="to" readonly="readonly" th:field="*{toDate}" required>
+            </div>
+
+            <input type="button" id="ajaxButton" onclick="searchViaAJAX()" value="Sprawdź walute">
+        </form>
+
+        <div id="results" style="margin-top: 30px">
+            <span id="bidResult"></span>
+            <span id="askResult"></span>
+        </div>
+
+    </div>
+
+</center>
+
+<script>
+    $(function () {
+        var today = new Date(),
+            from = $("#from")
+                .datepicker({
+                    minDate: new Date(2012, 0, 2),
+                    maxDate: today,
+                    defaultDate: "-1d",
+                    changeMonth: true,
+                    changeYear: true,
+                    showButtonPanel: true,
+                    numberOfMonths: 1
+                })
+                .on("change", function () {
+                    to.datepicker("option", "minDate", getDate(this));
+                }),
+            to = $("#to")
+                .datepicker({
+                    minDate: new Date(2012, 0, 2),
+                    maxDate: today,
+                    changeMonth: true,
+                    changeYear: true,
+                    showButtonPanel: true,
+                    numberOfMonths: 1,
+                    yearRange: "2012:2018"
+                })
+                .on("change", function () {
+                    from.datepicker("option", "maxDate", getDate(this));
+                });
+    });
+
+    function getDate(element) {
+        var date;
+        try {
+            date = $.datepicker.parseDate(dateFormat, element.value);
+        } catch (error) {
+            date = null;
+        }
+        return date;
+    }
+
+    function showDialog(message) {
+        document.getElementById("dialog").innerHTML = message;
+        $("#dialog").dialog();
+    }
+
+    function closeDialog() {
+        $("#dialog").dialog("close");
+    }
+
+    function processData(input) {
+        var responseJSON = jQuery.parseJSON(input);
+        var responseCode = responseJSON.code;
+
+        if (responseCode !== null) {
+            showDialog(responseCode);
+        }
+        else {
+            $("#bidResult").html('Sredni kurs kupna:' + responseJSON.meanBid);
+            $("#askResult").html('Odchylenie standardowe kursu sprzedaży:' + responseJSON.stdDeviationAsk);
+        }
+    }
+
+    function searchViaAJAX() {
+        var btnSubmit = $("#btn-submit");
+        var search = {};
+        search["code"] = $("#code").val();
+        search["fromDate"] = $("#from").val();
+        search["toDate"] = $("#to").val();
+
+        btnSubmit.prop("disabled", true);
+
+        var valResult = validateForm();
+        if (valResult !== "") {
+            showDialog(valResult);
+            btnSubmit.prop("disabled", false);
+        }
+        else {
+            showDialog("Przetwarzanie...");
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "/find",
+                data: JSON.stringify(search),
+                dataType: 'json',
+                cache: false,
+                timeout: 600000,
+                success: function (data) {
+                    processData(JSON.stringify(data, null, 4));
+                    console.log("SUCCESS : ", data);
+                    btnSubmit.prop("disabled", false);
+                },
+                error: function (e) {
+                    console.log("ERROR : ", e);
+                    btnSubmit.prop("disabled", false);
+                }
+            });
+            closeDialog();
+        }
+    }
+
+    function validateForm() {
+        var code = $("#code").val();
+        var fromDate = $("#from").val();
+        var toDate = $("#to").val();
+        var validationResult = "";
+
+        if (code === "" || fromDate === "" || toDate === "")
+            validationResult = "Brakuje danych wejściowych.";
+
+        fromDate = stringToDate(fromDate, "dd/MM/yyyy", "/");
+        toDate = stringToDate(toDate, "dd/MM/yyyy", "/");
+
+        if (fromDate.getTime() > toDate.getTime()) {
+            validationResult += " Wybrano nieprawidłowy przedział czasowy.";
+        }
+
+        return validationResult;
+    }
+
+    function stringToDate(_date, _format, _delimiter) {
+        var formatLowerCase = _format.toLowerCase();
+        var formatItems = formatLowerCase.split(_delimiter);
+        var dateItems = _date.split(_delimiter);
+        var monthIndex = formatItems.indexOf("mm");
+        var dayIndex = formatItems.indexOf("dd");
+        var yearIndex = formatItems.indexOf("yyyy");
+        var month = parseInt(dateItems[monthIndex]);
+        month -= 1;
+        return new Date(dateItems[yearIndex], month, dateItems[dayIndex]);
+    }
+</script>
+</body>
+
+</html>

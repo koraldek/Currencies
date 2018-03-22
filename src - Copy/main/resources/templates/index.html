@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Kalkulator walut</title>
+
+<link rel="stylesheet"
+	href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+$( function() {
+    var dateFormat = "yy/mm/dd",
+
+    from = $( "#from" )
+    .datepicker({
+      minDate: new Date(2012,0,2),
+      maxDate: new Date(),
+      defaultDate: "+1d",
+      changeMonth: true,
+      changeYear: true,
+      showButtonPanel: true,
+      numberOfMonths: 1
+    })
+    .on( "change", function() {
+      to.datepicker( "option", "minDate", getDate( this ) );
+    }),
+  to = $( "#to" )
+  .datepicker({
+
+    minDate: new Date(2012,0,2),
+  //  maxDate: new Date(),
+    defaultDate: "+1d",
+    changeMonth: true,
+    changeYear: true,
+    showButtonPanel: true,
+    numberOfMonths: 1
+  })
+  .on( "change", function() {
+    from.datepicker( "option", "maxDate", getDate( this ) );
+  });
+
+		function getDate(element) {
+			var date;
+			try {
+				date = $.datepicker.parseDate(dateFormat, element.value);
+			} catch (error) {
+				date = null;
+			}
+			return date;
+		}
+	});
+	
+</script>
+	
+	
+	<script>
+		function  checkDates(dateString) {
+            var inputDate = new Date(dateString).getTime();
+		    var teraz = new Date();
+		    if(inputDate > teraz.getTime())
+			document.getElementById("wynik1").innerHTML = "To jest wczesniej niz teraz";
+		    else
+		        document.getElementById("wynik1").innerHTML = "wpisana data jest pozniej niz teraz";
+        }
+	</script>
+</head>
+
+<body>
+	<header th:replace="layout :: site-header"></header>
+
+	<aside>
+		<h2>Kalkulator walut</h2>
+	</aside>
+
+
+	<form method="POST" th:object="${findCurrencyForm}">
+		<label for="code">Kod waluty:</label> 
+		<input type="text" th:field="*{code}">
+		<span class="formError" th:if="${#fields.hasErrors('code')}" th:errors="*{code}">Bledny kod</span> 
+		
+		<div>	
+			<label for="fromDate">Data początkowa:</label> 
+			<input type="text" id="from" readonly="true" th:field="*{fromDate}"> 
+						
+			 <span class="formError" th:if="${#fields.hasErrors('fromDate')}" th:errors="*{fromDate}">Brak daty</span>
+		</div>	
+		
+		<div>	
+			<label for="to">Data końcowa</label>
+			<input type="text" id="to" readonly="true" th:field="*{toDate}">
+			<span class="formError" th:if="${#fields.hasErrors('toDate')}" th:errors="*{toDate}">Invalid username
+			</span>
+		</div>	
+				
+		<button type="submit">Sprawdz walute</button>
+	</form>
+
+
+
+	<div id="wynik1">miejsce na wyniki</div>
+	<div id="wynik2">miejsce na wyniki</div>
+	<input type="date" id="mData"/>
+	<button id="sprawdzacz" onclick="checkDates(document.getElementById('to').value)">Sprawdz</button>
+
+<span th:text="'Wyniki: Sredni kurs kupna:  ' + ${meanBid} + ', Odchylenie standardowe:' + ${stdDeviationAsk}"></span>
+
+	<footer th:replace="layout :: site-footer"></footer>
+</body>
+
+</html>

@@ -1,0 +1,87 @@
+﻿html, body {
+   background-image:url("../img/background.jpg");
+}
+h1 {
+    font-variant: small-caps;
+    font-size: 30px;
+}
+h2{
+    width: 200px;
+}
+
+#bidResult {
+    margin-top: 100px;
+    height:70px;
+    border: solid;
+    background-color: darkgray;
+    width: 200px;
+}
+#askResult {
+    margin-top:100px;
+    width:200px;
+    height:70px; 
+    border: solid;
+    background-color: darkgray;
+}
+#ajaxButton {
+    display: block;
+    height: 50px;
+    width: 120px;
+    background-color: lightsteelblue;
+    border: solid;
+    border-color: darkslategray;
+    position: relative;
+    text-decoration: none;
+    background: linear-gradient(top, #4682B4, #B0E0E6);
+    border-radius: 50px;
+    box-shadow: 0 8px 0 #4682B4;
+    text-shadow: 0 2px 2px #B0E0E6;
+    background: -webkit-linear-gradient(top, #4682B4, #B0E0E6);
+    background: -moz-linear-gradient(top, #4682B4, #B0E0E6);
+    background: -o-linear-gradient(top, #4682B4, #B0E0E6);
+    background: -moz-linear-gradient(top, #4682B4, #B0E0E6);
+    background: linear-gradient(top, #4682B4, #B0E0E6);
+    margin-top:35px;
+}
+#ajaxButton:hover {
+        background: #2a94eb;
+        background: -webkit-linear-gradient(top, #4682B4, #B0E0E6);
+        background: -moz-linear-gradient(top, #4682B4, #B0E0E6);
+        background: -o-linear-gradient(top, #4682B4, #B0E0E6);
+        background: -moz-linear-gradient(top, #4682B4, #B0E0E6);
+        background: linear-gradient(top, #4682B4, #B0E0E6);
+    }
+
+.front{
+margin-top:11%;
+}
+.footer_style {
+    font-size:18px;
+}
+#container {
+    height: 100%;
+    width: 100%;
+}
+
+#header {
+    position: absolute;
+    left: 25%;
+    width: 50%;
+    height: 10%;
+    border-width: 2px;
+    border-color:darkslategray;
+    border-style: solid;
+    background-color:darkgrey;   
+    opacity: 0.95;
+    filter: alpha(opacity=50);
+}
+
+#main {
+    position: absolute;
+    left: 25%;
+    width: 50%;
+    height: 95%;
+    background-color: seashell;
+    opacity: 0.9;
+    filter: alpha(opacity=50);
+}

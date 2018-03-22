@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="site-head">
+<title>Ika-calc</title>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="../static/css/styles.css"
+	th:href="@{/css/styles.css}" />
+<link rel="icon" href="../static/img/icon.ico"
+	th:href="@{/img/favicon.ico}" />
+<script src="../static/js/jquery-3.1.0.min.js"
+	th:src="@{/js/jquery-3.1.0.min.js}"></script>
+<script src="../static/js/blog-scripts.js"
+	th:src="@{/js/blog-scripts.js}"></script>
+
+</head>
+
+
+<body>
+	<header th:fragment="site-header">
+
+		<div id="logged-in-info">
+			<span>Hello, <b>(user)</b></span>
+			<form method="post" th:action="@{/logout}">
+				<input type="submit" value="Logout" />
+			</form>
+		</div>
+
+
+
+
+	</header>
+	<h1>Welcome</h1>
+
+	<footer th:fragment="site-footer"> &copy; Kalkulator walut,
+		2018 </footer>
+</body>
+</html>
