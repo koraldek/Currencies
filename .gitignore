@@ -1,5 +1,7 @@
 target/
 !.mvn/wrapper/maven-wrapper.jar
+!target/Currencies.jar
+notes
 
 ### STS ###
 .apt_generated

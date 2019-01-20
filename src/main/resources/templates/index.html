@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="pl" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta charset="utf-8">
@@ -61,11 +61,12 @@
                 <input type="text" id="to" readonly="readonly" th:field="*{toDate}" required>
             </div>
 
-            <input type="button" id="ajaxButton" onclick="searchViaAJAX()" value="Sprawdź walute">
+            <input type="button" id="ajaxButton" onclick="searchViaAJAX()" value="Sprawdź walutę">
         </form>
 
         <div id="results" style="margin-top: 30px">
-            <span id="bidResult"></span>
+            <span id="bidResult">Wprowadź dane i naciśnij "Sprawdź walutę"</span>
+            <br>
             <span id="askResult"></span>
         </div>
 
@@ -87,7 +88,7 @@
                     numberOfMonths: 1
                 })
                 .on("change", function () {
-                    to.datepicker("option", "minDate", getDate(this));
+                    to.datepicker("option", "minDate", getDate(from));
                 }),
             to = $("#to")
                 .datepicker({
@@ -100,7 +101,7 @@
                     yearRange: "2012:2018"
                 })
                 .on("change", function () {
-                    from.datepicker("option", "maxDate", getDate(this));
+                    from.datepicker("option", "maxDate", getDate(to));
                 });
     });
 
@@ -182,13 +183,13 @@
         var validationResult = "";
 
         if (code === "" || fromDate === "" || toDate === "")
-            validationResult = "Brakuje danych wejściowych.";
+            validationResult = "Brak danych wejściowych.";
 
         fromDate = stringToDate(fromDate, "dd/MM/yyyy", "/");
         toDate = stringToDate(toDate, "dd/MM/yyyy", "/");
 
         if (fromDate.getTime() > toDate.getTime()) {
-            validationResult += " Wybrano nieprawidłowy przedział czasowy.";
+            validationResult += "Wybrano nieprawidłowy przedział czasowy.";
         }
 
         return validationResult;

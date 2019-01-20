@@ -11,14 +11,14 @@ import pl.krasnowski.Currencies.models.RateWrapper;
 /**
  * Manipulate currencies data.
  * 
- * @author Korald
+ * @author Dawid Krasnowski
  *
  */
 @Service
 public interface RateService {
 	double calculateMeanBid(List<Rate> rates);
 
-	double calculateStdDeviationAsk(List<Rate> rates);
+	double calculateAskStdDeviation(List<Rate> rates);
 
 	RateWrapper getRates(String code, LocalDate fromDate, LocalDate toDate);
 }

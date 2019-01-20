@@ -1,9 +1,5 @@
 package pl.krasnowski.Currencies.controllers;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,20 +12,20 @@ import pl.krasnowski.Currencies.models.RateWrapper;
 import pl.krasnowski.Currencies.models.forms.FindCurrencyForm;
 import pl.krasnowski.Currencies.services.RateService;
 
+import javax.validation.Valid;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 @Controller
-public class HomepageController {
+class HomepageController {
 
 	@Autowired
-	RateService rService;
+	private RateService rService;
 
-	@Autowired
-	RateWrapper rateWrapper;
-
-	@GetMapping("/find")
+	@GetMapping({"/find","/"})
 	public String homepage(FindCurrencyForm formModel) {
 		return "index";
 	}
-
 
 	@PostMapping("/find")
 	public ResponseEntity<?> findByAJAX(@Valid @RequestBody FindCurrencyForm currForm, BindingResult bindingResult) {
@@ -41,16 +37,16 @@ public class HomepageController {
 		LocalDate fromDate = LocalDate.parse(currForm.getFromDate(), formatter);
 		LocalDate toDate = LocalDate.parse(currForm.getToDate(), formatter);
 
-		rateWrapper = rService.getRates(currForm.getCode(), fromDate, toDate);
+		RateWrapper rateWrapper = rService.getRates(currForm.getCode(), fromDate, toDate);
 
-		if (rateWrapper.getCode() != null) {
-			responseBody.setCode(rateWrapper.getCode());
+		if (rateWrapper.getErrorCode() != null) {
+			responseBody.setCode(rateWrapper.getErrorCode());
 		} else {
 			responseBody.setMeanBid(rService.calculateMeanBid(rateWrapper.getRates()));
-			responseBody.setStdDeviationAsk(rService.calculateStdDeviationAsk(rateWrapper.getRates()));
+			responseBody.setStdDeviationAsk(rService.calculateAskStdDeviation(rateWrapper.getRates()));
 			responseBody.setRates(rateWrapper.getRates());
 		}
-
+		System.out.println(responseBody.toString());
 		return ResponseEntity.ok(responseBody);
 	}
 

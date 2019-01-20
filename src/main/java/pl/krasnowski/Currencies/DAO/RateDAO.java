@@ -13,10 +13,10 @@ import pl.krasnowski.Currencies.models.RateWrapper;
  */
 @Repository
 public interface RateDAO {
-	public static final String JSON_FORMAT = "?format=json";
-	public static final String NBP_API_URL = "http://api.nbp.pl/api/exchangerates/";
-	public static final String HTTP_RESPONSE_ERROR = "HTTP response error code:";
-	public static final int MAX_RESULTS_PER_QUERY = 255;
+	String JSON_FORMAT = "?format=json";
+	String NBP_API_URL = "http://api.nbp.pl/api/exchangerates/";
+	String HTTP_RESPONSE_ERROR = "HTTP response error errorCode:";
+	int MAX_RESULTS_PER_QUERY = 255;
 
 	RateWrapper findByCode(String code, LocalDate fromDate, LocalDate toDate);
 }
